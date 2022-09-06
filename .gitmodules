@@ -1,0 +1,6 @@
+[submodule "loggerpp"]
+	path = loggerpp
+	url = git@github.com:FloweyTheFlower420/loggerpp.git 
+[submodule "phylib/loggerpp"]
+	path = phylib/loggerpp
+	url = https://github.com/FloweyTheFlower420/loggerpp

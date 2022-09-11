@@ -1,0 +1,20 @@
+objtype obj
+{
+    renderer circle();
+    renderer trail(5);
+    renderer arrow_vel(1);
+    renderer arrow_acc(1);
+    force drag(5, 1);
+    force const_acc(0, 9.8);
+}
+
+make_object("obj", 12, {
+    render_circle_color: #ffffff,
+    render_circle_radius: 6,
+    render_trail_color: #aaaaaa,
+    render_arrow_vel_color: #ffff00,
+    render_arrow_acc_color: #00ffff
+}).pos(500, 500).momentum(1000, -1000);
+
+engine_cycles_per(2000);
+engine_ticks_mult(0.25);

@@ -1,0 +1,30 @@
+objtype spring_joint control fixed
+{
+    renderer circle();
+}
+
+objtype object 
+{    
+    renderer circle();
+    renderer arrow_vel(1);
+    renderer arrow_acc(1);
+}
+
+fixed_point = make_object("spring_joint", 1, {
+    render_circle_radius: 6,
+    render_circle_color: #888888
+}).pos(500, 500);
+
+moving_point = make_object("object", 1, {
+    render_circle_radius: 6,
+    render_circle_color: #ffffff,
+    render_arrow_vel_color: #ffff00,
+    render_arrow_acc_color: #00ffff
+}).pos(500, 600);
+
+
+make_tracker(0.1, 100, 5)
+    .track(moving_point, "vel_y", #ffff00)
+    .track(moving_point, "acc_y", #00ffff);
+
+make_spring(fixed_point, moving_point, #aa22cc, 2, 60);

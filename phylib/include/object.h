@@ -12,6 +12,7 @@ namespace phy
     class object : public sf::Drawable
     {
     protected:
+        std::size_t id;
         vec2d acc;
         vec2d vel;
         vec2d pos;
@@ -26,7 +27,8 @@ namespace phy
         friend class physics_space;
         friend class object_class;
 
-        object(double mass, object_class* clazz, const named_value_map& v);
+        object(double mass, object_class* clazz, const named_value_map& v, std::size_t id);
+
     public:
         object(const object&) = delete;
         object(object&&) = delete;
@@ -48,6 +50,7 @@ namespace phy
         constexpr const vec2d& get_new_vel() const { return new_vel; }
         constexpr const vec2d& get_new_pos() const { return new_pos; }
         constexpr double get_mass() const { return mass; }
+        constexpr std::size_t identifier() const { return id; }
 
         constexpr void set_acc(const vec2d& a) { acc = new_acc = a; }
         constexpr void set_vel(const vec2d& a) { vel = new_vel = a; }

@@ -20,6 +20,13 @@ namespace phy
             virtual void update(object& obj, float dt, const vec2d& vec);
             virtual ~default_controller() = default;
         };
+
+        class fixed_controller : public movement_controller
+        {
+        public:
+            virtual void update(object& obj, float dt, const vec2d& vec);
+            virtual ~fixed_controller() = default;
+        };
     } // namespace movement
 } // namespace phy
 

@@ -2,12 +2,11 @@
 #define __PHY_COMPONENT_RENDERERS_ARROW_RENDERER_H__
 #include <SFML/Graphics.hpp>
 #include <component/renderer.h>
-#include <util/const_str.h>
 #include <object.h>
 
 namespace phy::render
 {
-    enum  arrow_type
+    enum arrow_type
     {
         VEL,
         ACC
@@ -25,9 +24,9 @@ namespace phy::render
             switch (T)
             {
             case VEL:
-                return "r@arrow_vel::color";
+                return "render_arrow_vel_color";
             case ACC:
-                return "r@arrow_acc::color";
+                return "render_arrow_acc_color";
             }
         }
 

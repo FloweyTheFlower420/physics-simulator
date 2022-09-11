@@ -1,7 +1,7 @@
 #include <component/force.h>
 #include <fmt/ranges.h>
-#include <object.h>
 #include <logging.h>
+#include <object.h>
 
 namespace phy::forces
 {
@@ -10,8 +10,8 @@ namespace phy::forces
         if (&that != &rhs)
         {
             vec2d dist = rhs.get_pos() - that.get_pos();
-            
-            if(dist.magnitude() < 0.1) 
+
+            if (dist.magnitude() < 0.1)
             {
                 logging::logger::get_instance().nwarn("force::gravity", fmt::format("small displacement of {}", dist));
                 dist.magnitude(0.1);
@@ -29,6 +29,13 @@ namespace phy::forces
     {
         if (&that == &rhs)
             return acc * that.get_mass();
+        return vec2d();
+    }
+
+    vec2d force_drag::compute_force(object& that, object& rhs)
+    {
+        if (&that == &rhs)
+            return -that.get_vel().normalize() * std::pow(that.get_vel().magnitude(), power) * drag_const;
         return vec2d();
     }
 

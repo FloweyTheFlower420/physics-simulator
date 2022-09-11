@@ -12,9 +12,10 @@ namespace phy::movement
         auto dv = obj.get_acc() * dt;
         obj.set_new_vel(obj.get_vel() + dv);
 
-        if(dv.magnitude() > 750) 
+        if (dv.magnitude() > 750)
         {
-            logging::logger::get_instance().nwarn("force::gravity", fmt::format("huge delta velocity of {}", dv.magnitude()));
+            logging::logger::get_instance().nwarn("force::gravity",
+                                                  fmt::format("huge delta velocity of {}", dv.magnitude()));
         }
 
         if (obj.get_vel().magnitude() > 1000000)
@@ -23,5 +24,10 @@ namespace phy::movement
                                                   fmt::format("velocity limit exceeded {}", obj.get_vel()));
             obj.set_new_vel(obj.get_vel().normalize() * 1000000);
         }
+    }
+
+    void fixed_controller::update(object& obj, float dt, const vec2d& vec)
+    {
+        obj.set_new_pos(obj.get_pos() + obj.get_vel() * dt);
     }
 } // namespace phy::movement

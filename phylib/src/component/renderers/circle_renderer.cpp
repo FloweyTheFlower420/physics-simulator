@@ -1,4 +1,5 @@
 #include <component/renderers/circle_renderer.h>
+#include <fmt/format.h>
 #include <object.h>
 
 namespace phy::render
@@ -14,7 +15,6 @@ namespace phy::render
     void circle_renderer::render_phase(const object& that, sf::RenderTarget& tgt, sf::RenderStates state)
     {
         sf::CircleShape& shape = *circle.get(that.get_valuemap());
-
         tgt.draw(shape, state);
     }
 

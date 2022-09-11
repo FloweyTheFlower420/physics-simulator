@@ -12,7 +12,7 @@ namespace phy::render
         double min_dist;
 
     public:
-        inline static constexpr named_type<sf::Color> COLOR_KEY = "r@trail::color";
+        inline static constexpr named_type<sf::Color> COLOR_KEY = "render_trail_color";
 
         trail_renderer(const slot_allocator& alloc, double min_dist);
 

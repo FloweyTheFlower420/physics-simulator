@@ -8,7 +8,7 @@
 #include <component/renderers/trail_renderer.h>
 #include <memory>
 #include <object.h>
-#include <string_view>
+#include <string>
 #include <unordered_map>
 #include <util/obj_class_util.h>
 
@@ -44,13 +44,15 @@ namespace phy
         constexpr object_builder& vel(double x, double y) { return vel({x, y}); }
         constexpr object_builder& pos(double x, double y) { return pos({x, y}); }
         constexpr object_builder& momentum(double x, double y) { return momentum({x, y}); }
+
+        constexpr object& get() const { return obj; }
     };
 
     class object_class_builder
     {
         physics_space& space;
         friend class physics_space;
-        inline object_class_builder(physics_space& p, movement::movement_controller* controller, const char* name)
+        inline object_class_builder(physics_space& p, movement::movement_controller* controller, const std::string& name)
             : space(p), controller(controller), name(name)
         {
         }
@@ -61,9 +63,9 @@ namespace phy
 
         std::unique_ptr<movement::movement_controller> controller;
 
-        std::unordered_map<std::string_view, std::size_t> name2idx;
+        std::unordered_map<std::string, std::size_t> name2idx;
         std::size_t idx = 0;
-        const char* name;
+        std::string name;
 
         std::size_t register_type(const char* name, void (*del)(void*));
 

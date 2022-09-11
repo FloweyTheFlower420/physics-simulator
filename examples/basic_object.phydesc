@@ -1,0 +1,16 @@
+objtype simple
+{
+    renderer circle();
+    renderer trail(5);
+    renderer arrow_vel(1);
+}
+
+make_object("simple", 1, {
+    render_circle_color: #ffffff,
+    render_circle_radius: 6,
+    render_trail_color: #aaaaaa,
+    render_arrow_vel_color: #ffff00
+}).pos(200, 200).momentum(10, 0);
+
+engine_cycles_per(1);
+engine_ticks_mult(1);

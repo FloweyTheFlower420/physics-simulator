@@ -2,7 +2,8 @@
 
 namespace phy
 {
-    object::object(double mass, object_class* clazz, const named_value_map& v) : clazz(clazz), mass(mass > 0 ? mass : 1)
+    object::object(double mass, object_class* clazz, const named_value_map& v, std::size_t id)
+        : clazz(clazz), mass(mass > 0 ? mass : 1), id(id)
     {
         clazz->init_object(*this, v);
     }

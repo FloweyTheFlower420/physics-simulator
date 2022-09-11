@@ -10,9 +10,8 @@ namespace phy::render
         indexed_type<sf::CircleShape> circle;
 
     public:
-        inline static constexpr named_type<sf::Color> COLOR_KEY = "r@circle::color";
-        inline static constexpr named_type<double> RADIUS_KEY = "r@circle::radius";
-
+        inline static constexpr named_type<sf::Color> COLOR_KEY = "render_circle_color";
+        inline static constexpr named_type<double> RADIUS_KEY = "render_circle_radius";
         circle_renderer(const slot_allocator& alloc);
 
         virtual void init(object& that, const named_value_map& map) override;
@@ -20,7 +19,6 @@ namespace phy::render
         virtual void render_phase(const object& that, sf::RenderTarget& tgt, sf::RenderStates state) override;
         virtual ~circle_renderer() override = default;
     };
-
 } // namespace phy::render
 
 #endif

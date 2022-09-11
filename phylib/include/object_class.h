@@ -1,11 +1,11 @@
 #ifndef __PHY_OBJECT_CLASS_H__
 #define __PHY_OBJECT_CLASS_H__
-#include <util/obj_class_util.h>
-#include <component/movement.h>
 #include <component/force.h>
+#include <component/movement.h>
 #include <component/renderer.h>
 #include <memory>
 #include <unordered_map>
+#include <util/obj_class_util.h>
 
 namespace phy
 {
@@ -24,13 +24,14 @@ namespace phy
         friend class object;
 
         object_class() = default;
-        
+
         void init_object(object& obj, const named_value_map& vmap) const;
         void destroy_object(object& obj) const;
+
     public:
         void set_key(object& obj, const char* s) const;
         constexpr std::size_t vmap_size() const { return deleters.size(); }
     };
-}
+} // namespace phy
 
 #endif

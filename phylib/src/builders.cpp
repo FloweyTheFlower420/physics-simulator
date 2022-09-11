@@ -6,7 +6,7 @@ namespace phy
 {
     std::size_t object_class_builder::register_type(const char* name, void (*del)(void*))
     {
-        if(!name)
+        if (!name)
         {
             deleters.push_back(del);
             return idx++;

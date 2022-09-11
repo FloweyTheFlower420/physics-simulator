@@ -1,0 +1,35 @@
+objtype planet
+{
+    force gravity(90000);
+    renderer circle();
+    renderer trail(10);
+    renderer arrow_vel(2);
+    renderer arrow_acc(2);
+}
+
+make_object("planet", 12, {
+    render_circle_color: #ff0000,
+    render_circle_radius: 6,
+    render_trail_color: #aa1111,
+    render_arrow_vel_color: #ffff00,
+    render_arrow_acc_color: #00ffff
+}).pos(250, 250).momentum([300, -500]);
+
+make_object("planet", 12, {
+    render_circle_color: #00ff00,
+    render_circle_radius: 6,
+    render_trail_color: #11aa11,
+    render_arrow_vel_color: #ffff00,
+    render_arrow_acc_color: #00ffff
+}).pos(250, 690).momentum([700, -500]);
+
+make_object("planet", 12, {
+    render_circle_color: #0000ff,
+    render_circle_radius: 6,
+    render_trail_color: #1111aa,
+    render_arrow_vel_color: #ffff00,
+    render_arrow_acc_color: #00ffff
+}).pos(690, 250).momentum([-1000, 1000]);
+
+engine_cycles_per(2000);
+engine_ticks_mult(0.25);

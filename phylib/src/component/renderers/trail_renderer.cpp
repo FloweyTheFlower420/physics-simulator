@@ -6,8 +6,7 @@ namespace phy::render
 {
 
     trail_renderer::trail_renderer(const slot_allocator& alloc, double min_dist)
-        : vert(alloc_slot<sf::VertexArray>(alloc)), min_dist(min_dist),
-          trail_color(alloc_slot<sf::Color>(alloc))
+        : vert(alloc_slot<sf::VertexArray>(alloc)), min_dist(min_dist), trail_color(alloc_slot<sf::Color>(alloc))
     {
     }
 

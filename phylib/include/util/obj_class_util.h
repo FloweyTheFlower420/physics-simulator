@@ -1,14 +1,14 @@
 #ifndef __PHY_UTIL_OBJ_CLASS_UTIL_H__
 #define __PHY_UTIL_OBJ_CLASS_UTIL_H__
 #include <any>
-#include <string_view>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
 namespace phy
 {
     using value_map = std::vector<void*>;
-    using named_value_map = std::unordered_map<std::string_view, std::any>;
+    using named_value_map = std::unordered_map<std::string, std::any>;
 
     template <typename T>
     class indexed_type
@@ -35,15 +35,12 @@ namespace phy
         constexpr T* get(const named_value_map& vmap) const { return (T*)vmap.at(v); }
 
         template <typename... Args>
-        std::pair<std::string_view, std::any> operator()(Args&&... args) const
+        std::pair<std::string, std::any> operator()(Args&&... args) const
         {
-            return std::make_pair<std::string_view, std::any>(v, T(std::forward<Args>(args)...));
+            return std::make_pair<std::string, std::any>(v, T(std::forward<Args>(args)...));
         }
 
-        constexpr const T& at(const named_value_map& map) const
-        {
-            return std::any_cast<const T&>(map.at(v));
-        }
+        constexpr const T& at(const named_value_map& map) const { return std::any_cast<const T&>(map.at(v)); }
     };
 
     template <typename T, typename R, typename... Args>
@@ -77,7 +74,7 @@ namespace phy
             }));
     }
 
-    using index_map = std::unordered_map<std::string_view, std::size_t>;
+    using index_map = std::unordered_map<std::string, std::size_t>;
 } // namespace phy
 
 #endif

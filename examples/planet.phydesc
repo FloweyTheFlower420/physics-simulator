@@ -1,0 +1,27 @@
+objtype space_object
+{
+    force gravity(10000);
+    renderer circle();
+    renderer trail(10);
+    renderer arrow_vel(0.5);
+    renderer arrow_acc(0.5);
+}
+
+make_object("space_object", 100, {
+    render_circle_color: #e5c76b,
+    render_circle_radius: 6,
+    render_trail_color: #e5c76b,
+    render_arrow_vel_color: #ffff00,
+    render_arrow_acc_color: #00ffff
+}).pos(500, 500).momentum([0, -3]);
+
+make_object("space_object", .1, {
+    render_circle_color: #ffffff,
+    render_circle_radius: 3,
+    render_trail_color: #aaaaaa,
+    render_arrow_vel_color: #ffff00,
+    render_arrow_acc_color: #00ffff
+}).pos(700, 500).momentum([0, 3]);
+
+engine_cycles_per(8000);
+engine_ticks_mult(0.1);

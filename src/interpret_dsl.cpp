@@ -1,8 +1,6 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <any>
-#include <bits/ranges_algo.h>
-#include <bits/utility.h>
 #include <cassert>
 #include <charconv>
 #include <component/force.h>
@@ -32,28 +30,82 @@
 #include <variant>
 #include <vector>
 
+// ---------- Physics sim DSL lexer: ----------
+
+/// \brief A location in the parsed source file
+///
 struct src_location
 {
     std::size_t line;
     std::size_t ch;
 };
 
-class parse_error : public std::runtime_error
-{
-    src_location l;
-    const char* fix;
-
-public:
-    parse_error(const char* msg, const src_location& l, const char* fix = nullptr) : std::runtime_error(msg), l(l), fix(fix)
-    {
-    }
-    constexpr const src_location& loc() { return l; }
-    constexpr const char* fix_msg() const { return fix; }
-};
-
+/// \brief A simple lexer token
+/// The lexer will convert a stream of characters from the source file into a stream of lextile tokens that will be used by 
+/// the parser in order to generate an abstract syntax tree 
+///
+/// The following describes all of the lextile tokens that are present:
+/// - ::token::token_type::TOK_CH - A non-categorized character
+/// - ::token::token_type::TOK_EOF - A token representing the end-of-file
+/// - ::token::token_type::TOK_IDENTIFIER - A identifier, matching the pattern [a-zA-Z_]\w*
+/// - ::token::token_type::TOK_OPERATOR - One of the math operators, such as +-*/% or =
+/// - ::token::token_type::TOK_SEPERATOR - The character ';'
+/// - ::token::token_type::TOK_KW_OBJTYPE - The 'objtype' keyword
+/// - ::token::token_type::TOK_KW_CONTROL - The 'control' keyword
+/// - ::token::token_type::TOK_KW_RENDERER - The 'renderer' keyword
+/// - ::token::token_type::TOK_KW_FORCE - The 'force' keyword
+/// - ::token::token_type::TOK_LIT_NUMBER - A double literal
+/// - ::token::token_type::TOK_LIT_COLOR - A color literal, in the format #XXXXXX, such as #ffffff
+/// - ::token::token_type::TOK_LIT_STR - A string literal, same as in C
+///
+/// For example, the following sample program:
+/// \code
+/// objtype sample_type control foo 
+/// {
+///     force example(123, #123123);
+///     renderer foo("this_is_a_string");
+/// }
+///
+/// value = some_function(123);
+/// \code
+///
+/// would be translated into the following lextile tokens:
+/// \code
+/// TOK_KW_OBJTYPE
+/// TOK_IDENTIFIER("sample_type")
+/// TOK_KW_CONTROL
+/// TOK_IDENTIFIER("foo")
+/// TOK_CH('{')
+/// TOK_KW_FORCE
+/// TOK_IDENTIFIER("example")
+/// TOK_CH('(')
+/// TOK_LIT_NUMBER(123)
+/// TOK_CH(',')
+/// TOK_LIT_COLOR(0x123123)
+/// TOK_CH(')')
+/// TOK_SEPERATOR
+/// TOK_KW_RENDERER
+/// TOK_IDENTIFIER("foo")
+/// TOK_CH('(')
+/// TOK_LIT_STR("this_is_a_string")
+/// TOK_CH(')')
+/// TOK_SEPERATOR
+/// TOK_CH('}')
+/// TOK_IDENTIFIER("value")
+/// TOK_OPERATOR('=')
+/// TOK_IDENTIFIER("some_function")
+/// TOK_CH('(')
+/// TOK_LIT_NUMBER(123)
+/// TOK_CH(')')
+/// TOK_SEPERATOR
+/// \code
+///
+/// Also see ::lexer
 class token
 {
 public:
+    /// \brief The type of a token
+    ///
     enum token_type : int8_t
     {
         TOK_CH = 0,
@@ -153,6 +205,7 @@ class lexer
     char last_ch = ' ';
     parse_context context;
 
+    // warning: ugly c++ ahead! this just parses a string literal..
     std::string parse_literal()
     {
         constexpr std::pair<char, char> ESC_SEQUENCES[] = {
@@ -353,6 +406,8 @@ public:
 
 #include <fmt/ranges.h>
 
+// ---------- Physics sim DSL Parser/Eval: ----------
+
 struct eval_context
 {
     std::unordered_map<std::string, std::any>& vars;
@@ -514,6 +569,7 @@ public:
 
 using arg_list = std::vector<std::unique_ptr<base_ast>>;
 using arg_map = std::unordered_map<std::string, std::unique_ptr<base_ast>>;
+using dict_type = std::shared_ptr<std::unordered_map<std::string, std::any>>;
 
 struct call_fn
 {
@@ -523,27 +579,11 @@ struct call_fn
     std::size_t this_hash;
 };
 
-template <typename... Args>
-constexpr std::vector<std::size_t> hashlist_from_type()
-{
-    return {typeid(Args).hash_code()...};
-}
-
-template <typename T, typename... Args, std::any (*fn)(eval_context& ctx, Args...)>
-constexpr auto __helper()
-{
-    return +[](const std::vector<std::any>& args, eval_context&) {
-        return fn(std::any_cast<const Args&>(args[std::index_sequence<sizeof...(Args)>::value])...);
-    };
-}
-
-using dict_type = std::shared_ptr<std::unordered_map<std::string, std::any>>;
-
 template <typename T, auto Fn>
 constexpr call_fn make(const char* name)
 {
     return [&]<typename... Args>(std::any (*)(eval_context&, Args...)) -> call_fn {
-        return {name, hashlist_from_type<Args...>(),
+        return {name, {typeid(Args).hash_code()...},
                 []<std::size_t... S>(std::integer_sequence<std::size_t, S...>){
                     return +[](const std::vector<std::any>& args, eval_context& c) {
                         return Fn(c, std::any_cast<Args>(args[S])...);
@@ -623,6 +663,9 @@ static std::unordered_map<std::string, phy::statspec_types> TYPES = {
 };
 
 // clang-format off
+
+// The function call registry. It currently is kind of ugly, but it should work
+// TODO: make this argument less cancer
 static call_fn FN_HANDLES[] = {
     make<void, +[](eval_context& ctx, const std::string& name, double mass, const dict_type& e) -> std::any {
         if (!ctx.space.class_exists(name))
